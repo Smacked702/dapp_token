@@ -6,7 +6,7 @@ const tokens = (n) => {
 }
 
 describe('Token', () => {
-  let token, accounts, deployer, receiver
+  let token, accounts, deployer, receiver, exchange
 
   beforeEach(async () => {
     const Token = await ethers.getContractFactory('Token')
@@ -15,6 +15,7 @@ describe('Token', () => {
     accounts = await ethers.getSigners() 
     deployer = accounts[0]
     receiver = accounts[1]
+    exchange = accounts[2]
   })
 
   describe('Deployment', () => {
@@ -86,6 +87,27 @@ describe('Token', () => {
         })
 
       })
+
+  })
+
+  describe('Approving Tokens', () => {
+    let token, accounts, deployer, receiver
+
+    beforeEach(async () => {
+      amount = tokens(100)
+      transaction = await token.connect(deployer).approve(exchange.address, amount)
+      result = await transaction.wait()
+    })
+
+    describe('Success', () => {
+      if('allocates an allowance for delegated token spending', async () => {
+        expect(await tokens.allowance(deployer.address, exchange.address)).to.equal(amount)
+      })
+    })
+
+    describe('Failure', () => {
+      
+    })
 
   })
 
